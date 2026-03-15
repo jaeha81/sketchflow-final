@@ -33,19 +33,19 @@ export default async function ProjectResultPage({ params }: { params: Promise<{ 
     <div className="min-h-screen bg-gray-50">
       <Header displayName={profile?.display_name || user.email || ''} />
       <main className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Link href="/dashboard" className="p-1 text-gray-400 hover:text-gray-600"><ArrowLeft size={20} /></Link>
-          <div className="flex-1">
-            <div className="flex items-center gap-3"><h2 className="text-xl font-bold text-gray-900">{project.name}</h2><span className={`text-xs px-2 py-0.5 rounded-full ${statusInfo.color}`}>{statusInfo.label}</span></div>
+        <div className="flex items-start gap-3 mb-4">
+          <Link href="/dashboard" className="p-1 text-gray-400 hover:text-gray-600 mt-1 shrink-0"><ArrowLeft size={20} /></Link>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap"><h2 className="text-lg sm:text-xl font-bold text-gray-900 break-words">{project.name}</h2><span className={`text-xs px-2 py-0.5 rounded-full ${statusInfo.color}`}>{statusInfo.label}</span></div>
             <p className="text-sm text-gray-500">{spaceLabel}{project.rough_area_m2 && ` · ${project.rough_area_m2}m²`}</p>
           </div>
-          {project.status === 'completed' && <AnalyzeButton projectId={id} label="재분석" />}
+          {project.status === 'completed' && <div className="shrink-0"><AnalyzeButton projectId={id} label="재분석" /></div>}
         </div>
 
         {sketchUrl && <div className="mb-6 bg-white rounded-xl border border-gray-200 p-3"><img src={sketchUrl} alt="스케치" className="max-h-48 object-contain mx-auto rounded-lg" /></div>}
 
         {project.status === 'draft' && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8 text-center">
             <p className="text-gray-500 mb-4">스케치가 업로드되었습니다. 분석을 시작하세요.</p>
             <AnalyzeButton projectId={id} />
           </div>
@@ -53,7 +53,7 @@ export default async function ProjectResultPage({ params }: { params: Promise<{ 
         {project.status === 'analyzing' && (
           <>
             <AnalysisPoller projectId={id} />
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-12 text-center">
               <RefreshCw size={32} className="mx-auto text-blue-500 animate-spin mb-4" />
               <p className="text-gray-700 font-medium mb-2">AI 분석 중...</p>
               <p className="text-sm text-gray-500">약 15~30초 소요됩니다. 완료되면 자동으로 업데이트됩니다.</p>

@@ -28,10 +28,12 @@ export function ConstructionCategories({ data }: { data: T }) {
               <div className="px-4 pb-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500 mt-3 mb-3">{cat.scope_ko || cat.scope}</p>
                 {cat.items.length > 0 && (
-                  <table className="w-full text-xs">
-                    <thead><tr className="text-gray-500 border-b border-gray-100"><th className="text-left py-2 font-medium">항목</th><th className="text-left py-2 font-medium w-16">단위</th><th className="text-left py-2 font-medium">비고</th></tr></thead>
-                    <tbody>{cat.items.map((item, j) => <tr key={j} className="border-b border-gray-50"><td className="py-2 text-gray-800">{item.name_ko || item.name}</td><td className="py-2 text-gray-500">{item.unit}</td><td className="py-2 text-gray-500">{item.note}</td></tr>)}</tbody>
-                  </table>
+                  <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <table className="w-full text-xs min-w-[320px]">
+                      <thead><tr className="text-gray-500 border-b border-gray-100"><th className="text-left py-2 font-medium">항목</th><th className="text-left py-2 font-medium w-12 sm:w-16">단위</th><th className="text-left py-2 font-medium">비고</th></tr></thead>
+                      <tbody>{cat.items.map((item, j) => <tr key={j} className="border-b border-gray-50"><td className="py-2 text-gray-800">{item.name_ko || item.name}</td><td className="py-2 text-gray-500">{item.unit}</td><td className="py-2 text-gray-500">{item.note}</td></tr>)}</tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             )}

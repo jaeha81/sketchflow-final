@@ -26,13 +26,13 @@ export function ProjectResultTabs({ analysis, projectId }: { analysis: AnalysisR
 
   return (
     <div>
-      <div className="flex gap-1 mb-6 overflow-x-auto pb-1">
+      <div className="flex gap-1 mb-6 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={cn('px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+            className={cn('px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
               tab === t.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50')}>
             {t.label}
-            {t.id === 'missing' && missingCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs bg-red-500 text-white rounded-full">{missingCount}</span>}
+            {t.id === 'missing' && missingCount > 0 && <span className="ml-1 sm:ml-1.5 inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 text-xs bg-red-500 text-white rounded-full">{missingCount}</span>}
           </button>
         ))}
       </div>

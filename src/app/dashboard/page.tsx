@@ -23,7 +23,7 @@ export default async function DashboardPage() {
           <Link href="/projects/new" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"><Plus size={16} />새 프로젝트</Link>
         </div>
         {!projects?.length ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-12 text-center">
             <FileText size={48} className="mx-auto text-gray-300 mb-4" /><p className="text-gray-500 mb-4">아직 프로젝트가 없습니다</p>
             <Link href="/projects/new" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"><Plus size={16} />첫 프로젝트 만들기</Link>
           </div>

@@ -15,17 +15,19 @@ export function EstimateItems({ data }: { data: T }) {
       {Object.entries(grouped).map(([code, items]) => (
         <div key={code} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200"><h4 className="text-sm font-medium text-gray-900">[{code}] {catLabel(code)}</h4></div>
-          <table className="w-full text-sm">
-            <thead><tr className="text-xs text-gray-500 border-b border-gray-100"><th className="text-left px-4 py-2 font-medium">항목</th><th className="text-left px-4 py-2 font-medium w-16">단위</th><th className="text-right px-4 py-2 font-medium w-20">수량</th><th className="text-left px-4 py-2 font-medium">비고</th></tr></thead>
-            <tbody>{items.map(item => (
-              <tr key={item.id} className="border-b border-gray-50">
-                <td className="px-4 py-2 text-gray-800">{item.name_ko || item.name}</td>
-                <td className="px-4 py-2 text-gray-500">{item.unit}</td>
-                <td className="px-4 py-2 text-right text-gray-800">{item.estimated_quantity !== null ? item.estimated_quantity : <span className="text-gray-400 text-xs">실측 필요</span>}</td>
-                <td className="px-4 py-2 text-gray-500 text-xs">{item.note}</td>
-              </tr>
-            ))}</tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[400px]">
+              <thead><tr className="text-xs text-gray-500 border-b border-gray-100"><th className="text-left px-3 sm:px-4 py-2 font-medium">항목</th><th className="text-left px-2 sm:px-4 py-2 font-medium w-12 sm:w-16">단위</th><th className="text-right px-2 sm:px-4 py-2 font-medium w-16 sm:w-20">수량</th><th className="text-left px-3 sm:px-4 py-2 font-medium">비고</th></tr></thead>
+              <tbody>{items.map(item => (
+                <tr key={item.id} className="border-b border-gray-50">
+                  <td className="px-3 sm:px-4 py-2 text-gray-800">{item.name_ko || item.name}</td>
+                  <td className="px-2 sm:px-4 py-2 text-gray-500">{item.unit}</td>
+                  <td className="px-2 sm:px-4 py-2 text-right text-gray-800">{item.estimated_quantity !== null ? item.estimated_quantity : <span className="text-gray-400 text-xs">실측 필요</span>}</td>
+                  <td className="px-3 sm:px-4 py-2 text-gray-500 text-xs">{item.note}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
         </div>
       ))}
     </div>

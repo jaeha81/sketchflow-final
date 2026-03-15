@@ -36,7 +36,7 @@ export function SketchUploader({ onFileSelect, currentFile, disabled }: {
       <label className="block text-sm font-medium text-gray-700 mb-2">스케치 이미지 <span className="text-red-500">*</span></label>
       <div onDragOver={e => { e.preventDefault(); setIsDragging(true) }} onDragLeave={() => setIsDragging(false)}
         onDrop={e => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f) }}
-        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-300 hover:bg-gray-50'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        className={`border-2 border-dashed rounded-xl p-5 sm:p-8 text-center cursor-pointer transition-colors ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-300 hover:bg-gray-50'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
         <label className="cursor-pointer">
           <input type="file" accept="image/jpeg,image/png,image/webp,image/heic" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }} disabled={disabled} className="hidden" />
           <Upload size={32} className="mx-auto text-gray-400 mb-3" />
