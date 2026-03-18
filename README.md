@@ -26,3 +26,14 @@ npm run dev
 
 상세 설정: [SETUP-GUIDE.md](./SETUP-GUIDE.md)
 프로젝트 구조: [CLAUDE.md](./CLAUDE.md)
+
+---
+
+## 📊 개발 현황 <!-- jh-progress -->
+
+| 항목 | 내용 |
+|------|------|
+| **진행률** | `████████████████░░░░` **80%** |
+| **레포** | [sketchflow-final](https://github.com/jaeha81/sketchflow-final) |
+
+> 진행률: 80%
