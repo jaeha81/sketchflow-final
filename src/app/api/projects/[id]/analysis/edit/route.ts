@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const { data: analysis } = await supabase.from('analysis_results').select('*').eq('project_id', id).eq('is_current', true).single()
   if (!analysis) return NextResponse.json({ error: '분석 결과 없음' }, { status: 404 })
 
-  const validTopFields = ['spatial_summary', 'missing_info', 'construction_categories', 'estimate_items', 'client_summary']
+  const validTopFields = ['spatial_summary', 'missing_info', 'construction_categories', 'estimate_items', 'client_summary', 'design_analysis']
   const parts = parsePath(field_path)
   const topField = parts[0]
 
