@@ -28,5 +28,10 @@ export function getAIProvider(): AIProvider {
     const { ClaudeProvider } = require('./claude')
     return new ClaudeProvider()
   }
+  if (provider === 'gemini') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { GeminiProvider } = require('./gemini')
+    return new GeminiProvider()
+  }
   throw new Error(`지원하지 않는 AI 프로바이더: ${provider}`)
 }
