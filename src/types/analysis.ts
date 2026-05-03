@@ -52,6 +52,23 @@ export interface ClientSummary {
   confirmed_items: string[]; pending_items: string[]
 }
 
+export interface ColorSwatch {
+  role: string; name: string; hex: string; usage: string
+}
+
+export interface MaterialSuggestion {
+  area: string; material: string; reason: string
+}
+
+export interface DesignAnalysis {
+  style_concept: string
+  mood: string
+  color_palette: ColorSwatch[]
+  materials: MaterialSuggestion[]
+  layout_html: string
+  layout_css: string
+}
+
 export interface TokenUsage {
   input_tokens: number; output_tokens: number; total_cost_usd: number
 }
@@ -60,4 +77,5 @@ export interface AIAnalysisResponse {
   spatial_summary: SpatialSummary; missing_info: MissingInfo
   construction_categories: ConstructionCategories
   estimate_items: EstimateItems; client_summary: ClientSummary
+  design_analysis: DesignAnalysis
 }

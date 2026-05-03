@@ -1,12 +1,13 @@
 'use client'
 import { useState } from 'react'
 import type { AnalysisResult } from '@/types/database'
-import type { SpatialSummary as ST, MissingInfo as MI, ConstructionCategories as CC, EstimateItems as EI, ClientSummary as CS } from '@/types/analysis'
+import type { SpatialSummary as ST, MissingInfo as MI, ConstructionCategories as CC, EstimateItems as EI, ClientSummary as CS, DesignAnalysis as DA } from '@/types/analysis'
 import { SpatialSummary } from '@/components/analysis/SpatialSummary'
 import { MissingInfoChecklist } from '@/components/analysis/MissingInfoChecklist'
 import { ConstructionCategories } from '@/components/analysis/ConstructionCategories'
 import { EstimateItems } from '@/components/analysis/EstimateItems'
 import { ClientSummary } from '@/components/analysis/ClientSummary'
+import { DesignAnalysis } from '@/components/analysis/DesignAnalysis'
 import { cn } from '@/lib/utils/cn'
 
 const TABS = [
@@ -15,6 +16,7 @@ const TABS = [
   { id: 'categories', label: '공종 분류' },
   { id: 'estimate', label: '견적 항목' },
   { id: 'client', label: '고객 요약' },
+  { id: 'design', label: '디자인 코드' },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -23,6 +25,7 @@ export function ProjectResultTabs({ analysis, projectId }: { analysis: AnalysisR
   const [tab, setTab] = useState<TabId>('summary')
   const missingCount = ((analysis.missing_info as unknown as MI)?.items?.length) || 0
   const tu = analysis.token_usage as unknown as { total_cost_usd?: number } | null
+  const hasDesign = !!(analysis.design_analysis && Object.keys(analysis.design_analysis).length > 0)
 
   return (
     <div>
@@ -30,9 +33,15 @@ export function ProjectResultTabs({ analysis, projectId }: { analysis: AnalysisR
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={cn('px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
-              tab === t.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50')}>
+              tab === t.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50',
+              t.id === 'design' && !hasDesign && tab !== 'design' ? 'opacity-50' : '')}>
             {t.label}
-            {t.id === 'missing' && missingCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs bg-red-500 text-white rounded-full">{missingCount}</span>}
+            {t.id === 'missing' && missingCount > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs bg-red-500 text-white rounded-full">{missingCount}</span>
+            )}
+            {t.id === 'design' && hasDesign && (
+              <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 text-xs bg-indigo-500 text-white rounded-full">✦</span>
+            )}
           </button>
         ))}
       </div>
@@ -46,6 +55,7 @@ export function ProjectResultTabs({ analysis, projectId }: { analysis: AnalysisR
       {tab === 'categories' && <ConstructionCategories data={analysis.construction_categories as unknown as CC} />}
       {tab === 'estimate' && <EstimateItems data={analysis.estimate_items as unknown as EI} />}
       {tab === 'client' && <ClientSummary data={analysis.client_summary as unknown as CS} />}
+      {tab === 'design' && <DesignAnalysis data={analysis.design_analysis as unknown as DA} />}
     </div>
   )
 }
