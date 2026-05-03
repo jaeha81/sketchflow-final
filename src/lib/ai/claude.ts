@@ -125,9 +125,12 @@ export class ClaudeProvider implements AIProvider {
   }
 
   private toOutput(message: Anthropic.Message): AnalysisOutput {
+    console.error('[DEBUG] stop_reason:', message.stop_reason)
+    console.error('[DEBUG] content blocks:', message.content.map(b => b.type).join(', '))
     const toolBlock = message.content.find(
       (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use' && b.name === TOOL_NAME,
     )
+    console.error('[DEBUG] toolBlock.input (first 2000):', toolBlock ? JSON.stringify(toolBlock.input).slice(0, 2000) : 'NO TOOL BLOCK')
 
     let result
     if (toolBlock) {
