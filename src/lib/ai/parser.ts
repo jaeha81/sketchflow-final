@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import type { AIAnalysisResponse } from '@/types/analysis'
 
-const conf = z.enum(['high', 'medium', 'low', 'inferred'])
-const prio = z.enum(['critical', 'high', 'medium', 'low'])
+const conf = z.enum(['high', 'medium', 'low', 'inferred']).catch('inferred')
+const prio = z.enum(['critical', 'high', 'medium', 'low']).catch('medium')
 
 const analysisSchema = z.object({
   spatial_summary: z.object({
@@ -15,7 +15,7 @@ const analysisSchema = z.object({
     })).default([]),
     elements: z.array(z.object({
       id: z.string(),
-      type: z.enum(['wall','door','window','counter','furniture','storage','fixture','other']),
+      type: z.enum(['wall','door','window','counter','furniture','storage','fixture','other']).catch('other'),
       subtype: z.string().default(''), position_description: z.string(), confidence: conf,
     })).default([]),
     overall_confidence: conf,
@@ -56,7 +56,7 @@ const analysisSchema = z.object({
     mood: z.string().default(''),
     color_palette: z.array(z.object({
       role: z.string(), name: z.string(),
-      hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default('#CCCCCC'),
+      hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/).catch('#CCCCCC'),
       usage: z.string().default(''),
     })).default([]),
     materials: z.array(z.object({
