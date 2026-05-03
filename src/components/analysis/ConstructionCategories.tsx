@@ -6,7 +6,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react'
 
 export function ConstructionCategories({ data }: { data: T }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set(data.categories.map(c => c.code)))
-  const toggle = (code: string) => setExpanded(prev => { const n = new Set(prev); n.has(code) ? n.delete(code) : n.add(code); return n })
+  const toggle = (code: string) => setExpanded(prev => { const n = new Set(prev); if (n.has(code)) { n.delete(code) } else { n.add(code) }; return n })
 
   if (!data.categories.length) return <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center"><p className="text-gray-500 text-sm">감지된 공종이 없습니다.</p></div>
 
