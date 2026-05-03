@@ -19,7 +19,12 @@ export class GeminiProvider implements AIProvider {
     const model = client.getGenerativeModel({
       model: this.model,
       systemInstruction: SYSTEM_PROMPT,
-      generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 10000 },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      generationConfig: {
+        responseMimeType: 'application/json',
+        maxOutputTokens: 32768,
+        thinkingConfig: { thinkingBudget: 0 },
+      } as any,
     })
 
     const prompt = buildAnalysisPrompt(input)

@@ -72,15 +72,32 @@ const analysisSchema = z.object({
 
 export function parseAndValidateResponse(responseText: string): AIAnalysisResponse {
   let cleaned = responseText.trim()
+
+  // 마크다운 코드블록 제거
   const m = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/)
   if (m) cleaned = m[1].trim()
+
+  // JSON 객체 범위 추출 (균형잡힌 중괄호 탐색)
   const first = cleaned.indexOf('{')
-  const last = cleaned.lastIndexOf('}')
-  if (first !== -1 && last !== -1) cleaned = cleaned.slice(first, last + 1)
+  if (first !== -1) {
+    let depth = 0
+    let end = -1
+    for (let i = first; i < cleaned.length; i++) {
+      if (cleaned[i] === '{') depth++
+      else if (cleaned[i] === '}') { depth--; if (depth === 0) { end = i; break } }
+    }
+    if (end !== -1) cleaned = cleaned.slice(first, end + 1)
+  }
 
   let parsed: unknown
-  try { parsed = JSON.parse(cleaned) }
-  catch { throw new Error(`JSON 파싱 실패: ${cleaned.slice(0, 200)}...`) }
+  try {
+    parsed = JSON.parse(cleaned)
+  } catch {
+    // 제어 문자 제거 후 재시도 (layout_html/css 내 개행 등)
+    const sanitized = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    try { parsed = JSON.parse(sanitized) }
+    catch { throw new Error(`JSON 파싱 실패: ${cleaned.slice(0, 300)}`) }
+  }
 
   const v = analysisSchema.safeParse(parsed)
   if (!v.success) throw new Error(`응답 검증 실패: ${JSON.stringify(v.error.flatten().fieldErrors)}`)
