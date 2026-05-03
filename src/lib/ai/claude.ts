@@ -36,12 +36,22 @@ function buildMessageRequest(input: AnalysisInput) {
     }
   }
 
-  userContent.push({
-    type: 'text',
-    text: STATIC_PROMPT_PREAMBLE,
-    cache_control: { type: 'ephemeral' },
-  })
+  // Guard: only apply cache_control if text is non-empty (empty blocks cause API 400)
+  const preamble = STATIC_PROMPT_PREAMBLE
+  if (preamble) {
+    userContent.push({
+      type: 'text',
+      text: preamble,
+      cache_control: { type: 'ephemeral' },
+    })
+  }
   userContent.push({ type: 'text', text: buildAnalysisPrompt(input) })
+
+  // Final safety: strip any text blocks with empty text before sending
+  const safeContent = userContent.filter(
+    (b): b is Anthropic.ContentBlockParam =>
+      b.type !== 'text' || !!(b as Anthropic.TextBlockParam).text,
+  )
 
   return {
     model: 'claude-sonnet-4-6',
@@ -62,7 +72,7 @@ function buildMessageRequest(input: AnalysisInput) {
       },
     ],
     tool_choice: { type: 'tool' as const, name: TOOL_NAME },
-    messages: [{ role: 'user' as const, content: userContent }],
+    messages: [{ role: 'user' as const, content: safeContent }],
   }
 }
 
