@@ -1,3 +1,4 @@
+import Anthropic from '@anthropic-ai/sdk'
 import type { AIProvider, AnalysisInput, AnalysisOutput } from './provider'
 import { buildAnalysisPrompt } from './prompt'
 import { parseAndValidateResponse } from './parser'
@@ -14,12 +15,18 @@ export class ClaudeProvider implements AIProvider {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) throw new Error('ANTHROPIC_API_KEY가 설정되지 않았습니다')
 
+    const client = new Anthropic({ apiKey })
     const prompt = buildAnalysisPrompt(input)
-    const userContent: Array<Record<string, unknown>> = []
+
+    const userContent: Anthropic.ContentBlockParam[] = []
 
     userContent.push({
       type: 'image',
-      source: { type: 'base64', media_type: input.sketchMimeType, data: input.sketchImageBase64 },
+      source: {
+        type: 'base64',
+        media_type: input.sketchMimeType as 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif',
+        data: input.sketchImageBase64,
+      },
     })
 
     if (input.sitePhotoBase64?.length) {
@@ -33,42 +40,26 @@ export class ClaudeProvider implements AIProvider {
 
     userContent.push({ type: 'text', text: prompt })
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'prompt-caching-2024-07-31',
-      },
-      body: JSON.stringify({
-        model: this.model,
-        max_tokens: 10000,
-        system: [
-          {
-            type: 'text',
-            text: SYSTEM_PROMPT,
-            cache_control: { type: 'ephemeral' },
-          },
-        ],
-        messages: [{ role: 'user', content: userContent }],
-      }),
+    const message = await client.messages.create({
+      model: this.model,
+      max_tokens: 10000,
+      system: [
+        {
+          type: 'text',
+          text: SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
+      messages: [{ role: 'user', content: userContent }],
     })
 
-    if (!response.ok) {
-      const body = await response.text()
-      throw new Error(`Claude API 오류 (${response.status}): ${body}`)
-    }
+    const textBlock = message.content.find((b): b is Anthropic.TextBlock => b.type === 'text')
+    if (!textBlock) throw new Error('Claude 응답에 텍스트가 없습니다')
 
-    const data = await response.json()
-    const textBlock = data.content?.find((b: Record<string, unknown>) => b.type === 'text')
-    if (!textBlock?.text) throw new Error('Claude 응답에 텍스트가 없습니다')
-
-    const result = parseAndValidateResponse(textBlock.text as string)
-    const inTok = data.usage?.input_tokens || 0
-    const outTok = data.usage?.output_tokens || 0
-    const cacheRead = data.usage?.cache_read_input_tokens || 0
-    const cacheCreate = data.usage?.cache_creation_input_tokens || 0
+    const result = parseAndValidateResponse(textBlock.text)
+    const { input_tokens: inTok, output_tokens: outTok } = message.usage
+    const cacheRead = message.usage.cache_read_input_tokens ?? 0
+    const cacheCreate = message.usage.cache_creation_input_tokens ?? 0
     // 캐시 히트 시 input 비용 90% 절감 (read: $0.30/M, create: $3.75/M, output: $15/M)
     const cost = (inTok * 3 + cacheCreate * 3.75 + cacheRead * 0.3 + outTok * 15) / 1_000_000
 
@@ -79,7 +70,7 @@ export class ClaudeProvider implements AIProvider {
         output_tokens: outTok,
         total_cost_usd: Math.round(cost * 10000) / 10000,
       },
-      rawResponse: data,
+      rawResponse: message,
     }
   }
 }
