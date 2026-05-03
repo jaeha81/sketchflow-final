@@ -15,10 +15,16 @@ export interface AnalysisOutput {
   rawResponse: unknown
 }
 
+export type AIStreamEvent =
+  | { type: 'ai_start' }
+  | { type: 'ai_progress'; outputTokens: number }
+  | { type: 'ai_done'; outputTokens: number; inputTokens: number }
+
 export interface AIProvider {
   name: string
   model: string
   analyze(input: AnalysisInput): Promise<AnalysisOutput>
+  analyzeStream?(input: AnalysisInput, onEvent: (e: AIStreamEvent) => void): Promise<AnalysisOutput>
 }
 
 export function getAIProvider(): AIProvider {
