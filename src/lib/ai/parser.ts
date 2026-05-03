@@ -51,6 +51,23 @@ const analysisSchema = z.object({
     confirmed_items: z.array(z.string()).default([]),
     pending_items: z.array(z.string()).default([]),
   }),
+  design_analysis: z.object({
+    style_concept: z.string().default(''),
+    mood: z.string().default(''),
+    color_palette: z.array(z.object({
+      role: z.string(), name: z.string(),
+      hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/).default('#CCCCCC'),
+      usage: z.string().default(''),
+    })).default([]),
+    materials: z.array(z.object({
+      area: z.string(), material: z.string(), reason: z.string().default(''),
+    })).default([]),
+    layout_html: z.string().default(''),
+    layout_css: z.string().default(''),
+  }).default({
+    style_concept: '', mood: '', color_palette: [],
+    materials: [], layout_html: '', layout_css: '',
+  }),
 })
 
 export function parseAndValidateResponse(responseText: string): AIAnalysisResponse {

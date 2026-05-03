@@ -24,6 +24,7 @@ export function SketchUploader({ onFileSelect, currentFile, disabled }: {
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">스케치 이미지 <span className="text-red-500">*</span></label>
       <div className="relative border border-gray-200 rounded-xl overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={preview} alt="스케치 미리보기" className="w-full max-h-64 object-contain bg-gray-50" />
         <button type="button" onClick={() => { setPreview(null); onFileSelect(null) }} disabled={disabled} className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm hover:bg-red-50"><X size={16} className="text-red-500" /></button>
         <div className="p-2 bg-gray-50 text-xs text-gray-500">{currentFile.name}</div>

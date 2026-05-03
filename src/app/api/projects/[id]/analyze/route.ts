@@ -51,6 +51,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       raw_ai_response: output.rawResponse, spatial_summary: output.result.spatial_summary,
       missing_info: output.result.missing_info, construction_categories: output.result.construction_categories,
       estimate_items: output.result.estimate_items, client_summary: output.result.client_summary,
+      design_analysis: output.result.design_analysis ?? {},
       is_current: true, processing_time_ms: pt, token_usage: output.tokenUsage,
     }).select('id, version').single()
 

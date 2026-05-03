@@ -50,6 +50,7 @@ export interface AnalysisResult {
   construction_categories: Record<string, unknown>
   estimate_items: Record<string, unknown>
   client_summary: Record<string, unknown>
+  design_analysis: Record<string, unknown>
   is_current: boolean
   processing_time_ms: number | null
   token_usage: Record<string, unknown> | null

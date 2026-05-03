@@ -5,8 +5,8 @@ export function buildAnalysisPrompt(input: AnalysisInput): string {
   if (input.roughAreaM2) ctx.push(`대략적 면적: ${input.roughAreaM2}m²`)
   if (input.textNotes) ctx.push(`사용자 메모: ${input.textNotes}`)
 
-  return `당신은 15년 이상 경력의 인테리어 시공 전문가이자 현장 감리자입니다.
-업로드된 러프 스케치를 분석하고, 실제 인테리어 시공 워크플로우에 필요한 구조화된 데이터를 생성하세요.
+  return `당신은 15년 이상 경력의 인테리어 시공 전문가이자 현장 감리자이며, 공간 디자인 코드 변환 전문가입니다.
+업로드된 러프 스케치를 분석하고, 실제 인테리어 시공 워크플로우에 필요한 구조화된 데이터와 디자인 코드를 생성하세요.
 
 ## 컨텍스트
 ${ctx.join('\n')}
@@ -18,6 +18,7 @@ ${ctx.join('\n')}
 4. 공종 분류는 한국 인테리어 실무 기준을 따르세요.
 5. 견적 항목의 단위는 m², m, EA, SET, LOT 중 적절한 것을 사용하세요.
 6. 고객 요약은 비전문가가 이해할 수 있는 쉬운 한국어로 작성하세요.
+7. design_analysis의 layout_html과 layout_css는 실제로 복사해 사용할 수 있는 완전한 코드로 작성하세요.
 
 ## 응답 형식
 반드시 아래 JSON 구조로만 응답하세요. JSON 외의 텍스트는 포함하지 마세요.
@@ -54,6 +55,23 @@ ${ctx.join('\n')}
     "text_ko": "고객 요약 (쉬운 한국어)",
     "confirmed_items": ["확인된 항목"],
     "pending_items": ["확인 필요 항목"]
+  },
+  "design_analysis": {
+    "style_concept": "스케치를 기반으로 한 디자인 스타일 개념 (예: 모던 미니멀, 내추럴 우드 등) — 한국어 2~3문장",
+    "mood": "분위기 키워드 3개 (쉼표 구분, 예: 깔끔한, 따뜻한, 전문적인)",
+    "color_palette": [
+      { "role": "main", "name": "메인 컬러명", "hex": "#RRGGBB", "usage": "벽면/주요 면적" },
+      { "role": "accent", "name": "포인트 컬러명", "hex": "#RRGGBB", "usage": "파티션/가구" },
+      { "role": "floor", "name": "바닥 컬러명", "hex": "#RRGGBB", "usage": "바닥재" },
+      { "role": "text", "name": "텍스트/사인 컬러명", "hex": "#RRGGBB", "usage": "사인물/글씨" }
+    ],
+    "materials": [
+      { "area": "바닥", "material": "추천 자재명 (예: 강화마루 화이트오크)", "reason": "선택 이유" },
+      { "area": "벽면", "material": "추천 자재명", "reason": "선택 이유" },
+      { "area": "천장", "material": "추천 자재명", "reason": "선택 이유" }
+    ],
+    "layout_html": "<!-- 스케치 기반 공간 레이아웃 HTML (div 구조, class 포함, 완전한 코드) -->\n<div class=\"space-layout\">\n  <div class=\"zone zone-entrance\">입구</div>\n</div>",
+    "layout_css": "/* 공간 레이아웃 CSS (Grid/Flexbox, 완전한 코드) */\n.space-layout {\n  display: grid;\n  gap: 8px;\n}"
   }
 }`
 }

@@ -5,6 +5,7 @@ import { ProjectResultTabs } from '@/components/project/ProjectResultTabs'
 import { AnalyzeButton } from '@/components/project/AnalyzeButton'
 import { AnalysisPoller } from '@/components/project/AnalysisPoller'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, RefreshCw } from 'lucide-react'
 import { SPACE_TYPES, PROJECT_STATUS_LABELS } from '@/lib/utils/constants'
 
@@ -42,7 +43,7 @@ export default async function ProjectResultPage({ params }: { params: Promise<{ 
           {project.status === 'completed' && <AnalyzeButton projectId={id} label="재분석" />}
         </div>
 
-        {sketchUrl && <div className="mb-6 bg-white rounded-xl border border-gray-200 p-3"><img src={sketchUrl} alt="스케치" className="max-h-48 object-contain mx-auto rounded-lg" /></div>}
+        {sketchUrl && <div className="mb-6 bg-white rounded-xl border border-gray-200 p-3 flex justify-center"><Image src={sketchUrl} alt="스케치" width={600} height={192} className="max-h-48 w-auto object-contain rounded-lg" /></div>}
 
         {project.status === 'draft' && (
           <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
