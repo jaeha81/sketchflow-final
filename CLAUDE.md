@@ -172,3 +172,45 @@ sketchflow/
 - Supabase RLS로 데이터 접근 제어 (코드에서 user_id 필터 불필요하나 명시적으로도 작성)
 - Zod로 입력 검증 (API 라우트, AI 응답)
 - Tailwind CSS 유틸리티 클래스 사용 (별도 CSS 파일 없음)
+
+---
+
+## 작업 이력 (Claude/Codex 인계용)
+
+### 2026-05-03 — Zod 검증 에러 수정 (커밋 `83c5b73`, `b3ff48f`)
+
+**수정한 문제들:**
+1. `src/lib/ai/parser.ts` — Zod schema에 `.default()` 누락으로 검증 크래시 발생
+   - `spatial_summary.elements[].position_description` 등 required string 필드에 `.default('')` 추가
+   - top-level object 6개 필드 전부에 `.default({...})` 추가 (없으면 전체 undefined 처리됨)
+2. `src/lib/ai/claude.ts` — `cache_control` 적용 전 빈 text block 필터링 추가 (API 400 방지)
+
+---
+
+### 🔴 현재 미해결 이슈 [P1] — 분석 결과 데이터 빈 상태 표시
+
+**증상:** 에러는 없으나 분석 완료 후 5개 탭에 아무 데이터도 표시 안 됨
+
+**의심 원인:**
+- Zod `.default()` 추가로 스키마가 완전히 관대해져서, Claude가 빈 응답 반환 시 에러 대신 모두 빈값으로 채워지는 부작용
+- 실제 원인은 Claude가 `toolBlock.input`을 비워서 반환하는 것일 가능성 높음
+
+**디버그 로그 추가됨 (커밋 `404b64a`):**
+`src/lib/ai/claude.ts` `toOutput()` 메서드에 아래 로그가 임시 추가된 상태:
+```
+console.error('[DEBUG] stop_reason:', message.stop_reason)
+console.error('[DEBUG] content blocks:', ...)
+console.error('[DEBUG] toolBlock.input (first 2000):', ...)
+```
+
+**다음 세션 할 일:**
+1. sketchflow-final.vercel.app에서 분석 실행
+2. Vercel Dashboard → Functions → Runtime Logs → `[DEBUG]` 로그 확인
+3. `stop_reason`이 `tool_use`가 아니거나 `toolBlock.input`이 비어있으면 → 프롬프트 or 모델 파라미터 문제
+4. `toolBlock.input`에 데이터 있으면 → 파싱/저장/표시 로직 문제
+5. 원인 수정 후 디버그 로그 제거 (`console.error` 3줄 삭제)
+
+**관련 파일:**
+- `src/lib/ai/claude.ts` — `toOutput()` 메서드 (L127~)
+- `src/lib/ai/parser.ts` — Zod 검증 스키마
+- `src/lib/ai/pipeline.ts` — `raw_ai_response` Supabase 저장 (진단에 활용 가능)
